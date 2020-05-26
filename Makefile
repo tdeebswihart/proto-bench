@@ -1,5 +1,5 @@
 test:
-	rm results.txt
+	rm results.txt || true
 	go test -count=1 -bench=. | grep BenchmarkGo > results.txt
 	cd old && go test -count=1 -bench=. | grep BenchmarkGo >> ../results.txt
 	cat results.txt
