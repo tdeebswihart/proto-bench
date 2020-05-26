@@ -7,7 +7,8 @@ import (
 	"time"
 
 	gogoproto "github.com/gogo/protobuf/proto"
-	"google.golang.org/protobuf/proto"
+	proto1 "github.com/golang/protobuf/proto"
+	proto2 "google.golang.org/protobuf/proto"
 )
 
 func randString(l int) string {
@@ -16,15 +17,6 @@ func randString(l int) string {
 		buf[i] = byte(rand.Intn(256))
 	}
 	return fmt.Sprintf("%x", buf)[:l]
-}
-
-func TestMessage(t *testing.T) {
-	println(`
-A test suite for benchmarking various Go Protobuf libraries.
-
-See README.md for details on running the benchmarks.
-`)
-
 }
 
 // github.com/golang/protobuf
@@ -50,7 +42,7 @@ func BenchmarkGoV1Marshal(b *testing.B) {
 	b.ResetTimer()
 	var serialSize int
 	for i := 0; i < b.N; i++ {
-		bytes, err := proto.Marshal(data[rand.Intn(len(data))])
+		bytes, err := proto1.Marshal(data[rand.Intn(len(data))])
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -66,7 +58,7 @@ func BenchmarkGoV1Unmarshal(b *testing.B) {
 	var serialSize int
 	for i, d := range data {
 		var err error
-		ser[i], err = proto.Marshal(d)
+		ser[i], err = proto1.Marshal(d)
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -79,7 +71,7 @@ func BenchmarkGoV1Unmarshal(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		n := rand.Intn(len(ser))
 		o := &GoV1{}
-		err := proto.Unmarshal(ser[n], o)
+		err := proto1.Unmarshal(ser[n], o)
 		if err != nil {
 			b.Fatalf("goprotobuf failed to unmarshal: %s (%s)", err, ser[n])
 		}
@@ -109,7 +101,7 @@ func BenchmarkGoV2Marshal(b *testing.B) {
 	b.ResetTimer()
 	var serialSize int
 	for i := 0; i < b.N; i++ {
-		bytes, err := proto.Marshal(data[rand.Intn(len(data))])
+		bytes, err := proto2.Marshal(data[rand.Intn(len(data))])
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -125,7 +117,7 @@ func BenchmarkGoV2Unmarshal(b *testing.B) {
 	var serialSize int
 	for i, d := range data {
 		var err error
-		ser[i], err = proto.Marshal(d)
+		ser[i], err = proto2.Marshal(d)
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -138,7 +130,7 @@ func BenchmarkGoV2Unmarshal(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		n := rand.Intn(len(ser))
 		o := &GoV2{}
-		err := proto.Unmarshal(ser[n], o)
+		err := proto2.Unmarshal(ser[n], o)
 		if err != nil {
 			b.Fatalf("goprotobuf failed to unmarshal: %s (%s)", err, ser[n])
 		}
