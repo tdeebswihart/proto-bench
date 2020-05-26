@@ -45,14 +45,14 @@ type Go struct {
 
 benchmark                                | iter      | time/iter | bytes/op  |  allocs/op |tt.sec  | tt.kb        | ns/alloc
 -----------------------------------------|-----------|-----------|-----------|------------|--------|--------------|-----------
-BenchmarkGoV1Marshal-4                   |    3318381 |    355 ns/op |    51 |  64 |   1.18 |   17122 |    5.55
-BenchmarkGoV1Unmarshal-4                 |    3263350 |    365 ns/op |    51 | 128 |   1.19 |   16838 |    2.85
-BenchmarkGoV2Marshal-4                   |    3744885 |    335 ns/op |    51 |  64 |   1.25 |   19361 |    5.23
-BenchmarkGoV2Unmarshal-4                 |    2830618 |    407 ns/op |    51 | 128 |   1.15 |   14577 |    3.18
-BenchmarkGogoV1Marshal-4                 |    7718380 |    155 ns/op |    51 |  64 |   1.20 |   39826 |    2.42
-BenchmarkGogoV1Unmarshal-4               |    5585449 |    210 ns/op |    51 |  96 |   1.17 |   28820 |    2.19
-BenchmarkGoV1oldMarshal-4                |    4126480 |    285 ns/op |    51 |  64 |   1.18 |   21292 |    4.45
-BenchmarkGoV1oldUnmarshal-4              |    4230336 |    287 ns/op |    51 | 128 |   1.21 |   21828 |    2.24
+BenchmarkGoV1Marshal-4                   |    3399463 |    348 ns/op |    51 |  64 |   1.18 |   17541 |    5.44
+BenchmarkGoV1Unmarshal-4                 |    3307972 |    362 ns/op |    51 | 128 |   1.20 |   17069 |    2.83
+BenchmarkGoV2Marshal-4                   |    3486094 |    318 ns/op |    51 |  64 |   1.11 |   17988 |    4.97
+BenchmarkGoV2Unmarshal-4                 |    2589584 |    428 ns/op |    51 | 128 |   1.11 |   13362 |    3.34
+BenchmarkGogoV1Marshal-4                 |    7178234 |    162 ns/op |    51 |  64 |   1.16 |   37039 |    2.53
+BenchmarkGogoV1Unmarshal-4               |    5536908 |    211 ns/op |    51 |  96 |   1.17 |   28625 |    2.20
+BenchmarkGoV1oldMarshal-4                |    4081132 |    283 ns/op |    51 |  64 |   1.15 |   21058 |    4.42
+BenchmarkGoV1oldUnmarshal-4              |    3897282 |    290 ns/op |    51 | 128 |   1.13 |   20109 |    2.27
 
 
 Totals:
@@ -60,8 +60,8 @@ Totals:
 
 benchmark                                | iter  | time/iter | bytes/op  |  allocs/op |tt.sec  | tt.kb        | ns/alloc
 -----------------------------------------|-------|-----------|-----------|------------|--------|--------------|-----------
-BenchmarkGogoV1-4                        |   13303829 |    365 ns/op |   103 | 160 |   4.86 |  137295 |    2.28
-BenchmarkGoV1old-4                       |    8356816 |    572 ns/op |   103 | 192 |   4.78 |   86242 |    2.98
-BenchmarkGoV1-4                          |    6581731 |    720 ns/op |   103 | 192 |   4.74 |   67923 |    3.75
-BenchmarkGoV2-4                          |    6575503 |    742 ns/op |   103 | 192 |   4.88 |   67859 |    3.86
+BenchmarkGogoV1-4                        |   12715142 |    373 ns/op |   103 | 160 |   4.74 |  131347 |    2.33
+BenchmarkGoV1old-4                       |    7978414 |    573 ns/op |   103 | 192 |   4.57 |   82337 |    2.98
+BenchmarkGoV1-4                          |    6707435 |    710 ns/op |   103 | 192 |   4.76 |   69220 |    3.70
+BenchmarkGoV2-4                          |    6075678 |    746 ns/op |   103 | 192 |   4.53 |   62700 |    3.89
 
