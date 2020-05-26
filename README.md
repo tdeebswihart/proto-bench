@@ -5,9 +5,9 @@ This is a test suite for benchmarking various Go Protobuf libraries.
 ## Libraries
 
 * [Go Protobuf](https://blog.golang.org/protobuf-apiv2):
-  - [github.com/golang/protobuf](https://github.com/golang/protobuf) v1.3.4 is the most recent pre-APIv2 version of APIv1 (`old` sub-dir).
-  - [github.com/golang/protobuf](https://github.com/golang/protobuf) v1.4.0 is a version of APIv1 implemented in terms of APIv2.
-  - [google.golang.org/protobuf](https://google.golang.org/protobuf) v1.20.0 is APIv2.
+  - [github.com/golang/protobuf](https://github.com/golang/protobuf/releases/tag/v1.3.5) ~v1.3.5 is the most recent pre-APIv2 version of APIv1 (`old` sub-dir).
+  - [github.com/golang/protobuf](https://github.com/golang/protobuf) ^v1.4.0 is a version of APIv1 implemented in terms of APIv2.
+  - [google.golang.org/protobuf](https://github.com/protocolbuffers/protobuf-go) ^v1.20.0 is APIv2.
 
 * [Gogo Protobuf](https://github.com/gogo/protobuf):
   - [github.com/gogo/protobuf](https://github.com/gogo/protobuf) Protocol Buffers for Go with Gadgets.
