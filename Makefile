@@ -1,18 +1,13 @@
-# This is necessary due to the use of two conflicting generator commands for capnproto
-.NOTPARALLEL:
+ifndef GOPATH
+GOPATH := $(shell go env GOPATH)
+endif
 
-all: Colfer.go FlatBufferA.go msgp_gen.go structdef-gogo.pb.go structdef.pb.go structdef.capnp.go structdef.capnp2.go gencode.schema.gen.go gencode-unsafe.schema.gen.go structdefxdr_generated.go
+all: Colfer.go msgp_gen.go structdef-gogo.pb.go structdef.pb.go gencode.schema.gen.go gencode-unsafe.schema.gen.go structdefxdr_generated.go
 
 Colfer.go:
 	go run github.com/pascaldekloe/colfer/cmd/colf go
 	mv goserbench/Colfer.go .
 	rmdir goserbench
-
-FlatBufferA.go: flatbuffers-structdef.fbs
-	flatc -g flatbuffers-structdef.fbs
-	mv flatbuffersmodels/FlatBufferA.go FlatBufferA.go
-	rmdir flatbuffersmodels
-	sed -i '' 's/flatbuffersmodels/goserbench/' FlatBufferA.go
 
 msgp_gen.go: structdef.go
 	go run github.com/tinylib/msgp -o msgp_gen.go -file structdef.go -io=false -tests=false
@@ -21,18 +16,10 @@ structdef_easyjson.go: structdef.go
 	go run github.com/mailru/easyjson/easyjson -all structdef.go
 
 structdef-gogo.pb.go: structdef-gogo.proto
-	protoc --gogofaster_out=. -I. -I${GOPATH}/src  -I${GOPATH}/src/github.com/gogo/protobuf/protobuf structdef-gogo.proto
+	protoc --gogofaster_out=paths=source_relative:. -I. -I${GOPATH}/src  -I${GOPATH}/src/github.com/gogo/protobuf/protobuf structdef-gogo.proto
 
 structdef.pb.go: structdef.proto
-	protoc --go_out=. structdef.proto
-
-structdef.capnp2.go: structdef.capnp2
-	go get -u zombiezen.com/go/capnproto2/... # conflicts with go-capnproto
-	capnp compile -I${GOPATH}/src -ogo structdef.capnp2
-
-structdef.capnp.go: structdef.capnp
-	go get -u github.com/glycerine/go-capnproto/capnpc-go # conflicts with capnproto2
-	capnp compile -I${GOPATH}/src -ogo structdef.capnp
+	protoc --go_out=paths=source_relative:. structdef.proto
 
 gencode.schema.gen.go: gencode.schema
 	go run github.com/andyleap/gencode go -schema=gencode.schema -package=goserbench
@@ -45,7 +32,7 @@ structdefxdr_generated.go: structdefxdr.go
 
 .PHONY: clean
 clean:
-	rm -f Colfer.go FlatBufferA.go msgp_gen.go structdef-gogo.pb.go structdef.pb.go structdef.capnp.go structdef.capnp2.go gencode.schema.gen.go gencode-unsafe.schema.gen.go structdefxdr_generated.go
+	rm -f Colfer.go msgp_gen.go structdef-gogo.pb.go structdef.pb.go gencode.schema.gen.go gencode-unsafe.schema.gen.go structdefxdr_generated.go
 
 .PHONY: install
 install:

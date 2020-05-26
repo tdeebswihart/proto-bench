@@ -34,7 +34,7 @@ This is a test suite for benchmarking various Go serialization methods.
 
 ```bash
 go get -u -t
-go test -bench='.*' ./
+go test -bench=. | tee -a results.txt
 ```
 
 To update the table in the README:

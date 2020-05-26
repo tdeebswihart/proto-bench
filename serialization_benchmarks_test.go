@@ -15,9 +15,7 @@ import (
 	"github.com/Sereal/Sereal/Go/sereal"
 	"github.com/alecthomas/binary"
 	"github.com/davecgh/go-xdr/xdr"
-	capn "github.com/glycerine/go-capnproto"
-	"github.com/gogo/protobuf/proto"
-	flatbuffers "github.com/google/flatbuffers/go"
+	gogoproto "github.com/gogo/protobuf/proto"
 	"github.com/hprose/hprose-go"
 	hprose2 "github.com/hprose/hprose-golang/io"
 	ikea "github.com/ikkerens/ikeapack"
@@ -29,8 +27,8 @@ import (
 	"github.com/ugorji/go/codec"
 	vmihailenco "github.com/vmihailenco/msgpack/v4"
 	"go.dedis.ch/protobuf"
+	"google.golang.org/protobuf/proto"
 	"gopkg.in/mgo.v2/bson"
-	capnp "zombiezen.com/go/capnproto2"
 )
 
 var (
@@ -518,165 +516,6 @@ func BenchmarkBinaryUnmarshal(b *testing.B) {
 	benchUnmarshal(b, BinarySerializer{})
 }
 
-// github.com/google/flatbuffers/go
-
-type FlatBufferSerializer struct {
-	builder *flatbuffers.Builder
-}
-
-func (s *FlatBufferSerializer) Marshal(o interface{}) ([]byte, error) {
-	a := o.(*A)
-	builder := s.builder
-
-	builder.Reset()
-
-	name := builder.CreateString(a.Name)
-	phone := builder.CreateString(a.Phone)
-
-	FlatBufferAStart(builder)
-	FlatBufferAAddName(builder, name)
-	FlatBufferAAddPhone(builder, phone)
-	FlatBufferAAddBirthDay(builder, a.BirthDay.UnixNano())
-	FlatBufferAAddSiblings(builder, int32(a.Siblings))
-	var spouse byte
-	if a.Spouse {
-		spouse = byte(1)
-	}
-	FlatBufferAAddSpouse(builder, spouse)
-	FlatBufferAAddMoney(builder, a.Money)
-	builder.Finish(FlatBufferAEnd(builder))
-	return builder.Bytes[builder.Head():], nil
-}
-
-func (s *FlatBufferSerializer) Unmarshal(d []byte, i interface{}) error {
-	a := i.(*A)
-	o := FlatBufferA{}
-	o.Init(d, flatbuffers.GetUOffsetT(d))
-	a.Name = string(o.Name())
-	a.BirthDay = time.Unix(0, o.BirthDay())
-	a.Phone = string(o.Phone())
-	a.Siblings = int(o.Siblings())
-	a.Spouse = o.Spouse() == byte(1)
-	a.Money = o.Money()
-	return nil
-}
-
-func BenchmarkFlatBuffersMarshal(b *testing.B) {
-	benchMarshal(b, &FlatBufferSerializer{flatbuffers.NewBuilder(0)})
-}
-
-func BenchmarkFlatBuffersUnmarshal(b *testing.B) {
-	benchUnmarshal(b, &FlatBufferSerializer{flatbuffers.NewBuilder(0)})
-}
-
-// github.com/glycerine/go-capnproto
-
-type CapNProtoSerializer struct {
-	buf []byte
-	out *bytes.Buffer
-}
-
-func (x *CapNProtoSerializer) Marshal(o interface{}) ([]byte, error) {
-	a := o.(*A)
-	s := capn.NewBuffer(x.buf)
-	c := NewRootCapnpA(s)
-	c.SetName(a.Name)
-	c.SetBirthDay(a.BirthDay.UnixNano())
-	c.SetPhone(a.Phone)
-	c.SetSiblings(int32(a.Siblings))
-	c.SetSpouse(a.Spouse)
-	c.SetMoney(a.Money)
-	x.out.Reset()
-	_, err := s.WriteTo(x.out)
-	x.buf = []byte(s.Data)[:0]
-	return x.out.Bytes(), err
-}
-
-func (x *CapNProtoSerializer) Unmarshal(d []byte, i interface{}) error {
-	a := i.(*A)
-	s, _, err := capn.ReadFromMemoryZeroCopy(d)
-	if err != nil {
-		return err
-	}
-	o := ReadRootCapnpA(s)
-	a.Name = o.Name()
-	a.BirthDay = time.Unix(0, o.BirthDay())
-	a.Phone = o.Phone()
-	a.Siblings = int(o.Siblings())
-	a.Spouse = o.Spouse()
-	a.Money = o.Money()
-	return nil
-}
-
-func BenchmarkCapNProtoMarshal(b *testing.B) {
-	benchMarshal(b, &CapNProtoSerializer{nil, &bytes.Buffer{}})
-}
-
-func BenchmarkCapNProtoUnmarshal(b *testing.B) {
-	benchUnmarshal(b, &CapNProtoSerializer{nil, &bytes.Buffer{}})
-}
-
-// zombiezen.com/go/capnproto2
-
-type CapNProto2Serializer struct {
-	arena capnp.Arena
-}
-
-func (x *CapNProto2Serializer) Marshal(o interface{}) ([]byte, error) {
-	a := o.(*A)
-	m, s, err := capnp.NewMessage(x.arena)
-	if err != nil {
-		return nil, err
-	}
-	if err != nil {
-		return nil, err
-	}
-	c, err := NewRootCapnp2A(s)
-	if err != nil {
-		return nil, err
-	}
-	c.SetName(a.Name)
-	c.SetBirthDay(a.BirthDay.UnixNano())
-	c.SetPhone(a.Phone)
-	c.SetSiblings(int32(a.Siblings))
-	c.SetSpouse(a.Spouse)
-	c.SetMoney(a.Money)
-	return m.Marshal()
-}
-
-func (x *CapNProto2Serializer) Unmarshal(d []byte, i interface{}) error {
-	a := i.(*A)
-	m, err := capnp.Unmarshal(d)
-	if err != nil {
-		return err
-	}
-	o, err := ReadRootCapnp2A(m)
-	if err != nil {
-		return err
-	}
-	a.Name, err = o.Name()
-	if err != nil {
-		return err
-	}
-	a.BirthDay = time.Unix(0, o.BirthDay())
-	a.Phone, err = o.Phone()
-	if err != nil {
-		return err
-	}
-	a.Siblings = int(o.Siblings())
-	a.Spouse = o.Spouse()
-	a.Money = o.Money()
-	return nil
-}
-
-func BenchmarkCapNProto2Marshal(b *testing.B) {
-	benchMarshal(b, &CapNProto2Serializer{capnp.SingleSegment(nil)})
-}
-
-func BenchmarkCapNProto2Unmarshal(b *testing.B) {
-	benchUnmarshal(b, &CapNProto2Serializer{capnp.SingleSegment(nil)})
-}
-
 // github.com/hprose/hprose-go/io
 
 type HproseSerializer struct {
@@ -810,12 +649,12 @@ func generateProto() []*ProtoBufA {
 	a := make([]*ProtoBufA, 0, 1000)
 	for i := 0; i < 1000; i++ {
 		a = append(a, &ProtoBufA{
-			Name:     proto.String(randString(16)),
-			BirthDay: proto.Int64(time.Now().UnixNano()),
-			Phone:    proto.String(randString(10)),
-			Siblings: proto.Int32(rand.Int31n(5)),
-			Spouse:   proto.Bool(rand.Intn(2) == 1),
-			Money:    proto.Float64(rand.Float64()),
+			Name:     randString(16),
+			BirthDay: time.Now().UnixNano(),
+			Phone:    randString(10),
+			Siblings: rand.Int31n(5),
+			Spouse:   rand.Intn(2) == 1,
+			Money:    rand.Float64(),
 		})
 	}
 	return a
@@ -863,7 +702,7 @@ func BenchmarkGoprotobufUnmarshal(b *testing.B) {
 		// Validate unmarshalled data.
 		if validate != "" {
 			i := data[n]
-			correct := *o.Name == *i.Name && *o.Phone == *i.Phone && *o.Siblings == *i.Siblings && *o.Spouse == *i.Spouse && *o.Money == *i.Money && *o.BirthDay == *i.BirthDay //&& cmpTags(o.Tags, i.Tags) && cmpAliases(o.Aliases, i.Aliases)
+			correct := o.Name == i.Name && o.Phone == i.Phone && o.Siblings == i.Siblings && o.Spouse == i.Spouse && o.Money == i.Money && o.BirthDay == i.BirthDay //&& cmpTags(o.Tags, i.Tags) && cmpAliases(o.Aliases, i.Aliases)
 			if !correct {
 				b.Fatalf("unmarshaled object differed:\n%v\n%v", i, o)
 			}
@@ -894,7 +733,7 @@ func BenchmarkGogoprotobufMarshal(b *testing.B) {
 	b.ResetTimer()
 	var serialSize int
 	for i := 0; i < b.N; i++ {
-		bytes, err := proto.Marshal(data[rand.Intn(len(data))])
+		bytes, err := gogoproto.Marshal(data[rand.Intn(len(data))])
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -910,7 +749,7 @@ func BenchmarkGogoprotobufUnmarshal(b *testing.B) {
 	var serialSize int
 	for i, d := range data {
 		var err error
-		ser[i], err = proto.Marshal(d)
+		ser[i], err = gogoproto.Marshal(d)
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -923,7 +762,7 @@ func BenchmarkGogoprotobufUnmarshal(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		n := rand.Intn(len(ser))
 		o := &GogoProtoBufA{}
-		err := proto.Unmarshal(ser[n], o)
+		err := gogoproto.Unmarshal(ser[n], o)
 		if err != nil {
 			b.Fatalf("goprotobuf failed to unmarshal: %s (%s)", err, ser[n])
 		}
