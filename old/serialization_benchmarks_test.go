@@ -81,7 +81,7 @@ func Benchmark_GoV1old_Proto_Unmarshal(b *testing.B) {
 		}
 	}
 }
-func Benchmark_GoV1_JSON_Marshal(b *testing.B) {
+func Benchmark_GoV1old_JSON_Marshal(b *testing.B) {
 	data := generateGoV1(b.N)
 	marshaler := proto1jsonpb.Marshaler{}
 	b.ReportAllocs()
@@ -98,7 +98,7 @@ func Benchmark_GoV1_JSON_Marshal(b *testing.B) {
 	b.ReportMetric(float64(serialSize)/float64(b.N), "B/serial")
 }
 
-func Benchmark_GoV1_JSON_Unmarshal(b *testing.B) {
+func Benchmark_GoV1old_JSON_Unmarshal(b *testing.B) {
 	b.StopTimer()
 	data := generateGoV1(b.N)
 	marshaler := proto1jsonpb.Marshaler{}
