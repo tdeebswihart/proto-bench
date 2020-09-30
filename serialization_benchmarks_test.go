@@ -6,7 +6,6 @@ import (
 	"testing"
 	"time"
 
-	gogoproto "github.com/gogo/protobuf/proto"
 	proto1 "github.com/golang/protobuf/proto"
 	proto2 "google.golang.org/protobuf/proto"
 )
@@ -160,7 +159,7 @@ func BenchmarkGogoV1Marshal(b *testing.B) {
 	b.ResetTimer()
 	var serialSize int
 	for i := 0; i < b.N; i++ {
-		bytes, err := gogoproto.Marshal(data[rand.Intn(len(data))])
+		bytes, err := data[rand.Intn(len(data))].Marshal()
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -176,7 +175,7 @@ func BenchmarkGogoV1Unmarshal(b *testing.B) {
 	var serialSize int
 	for i, d := range data {
 		var err error
-		ser[i], err = gogoproto.Marshal(d)
+		ser[i], err = d.Marshal()
 		if err != nil {
 			b.Fatal(err)
 		}
@@ -189,7 +188,7 @@ func BenchmarkGogoV1Unmarshal(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		n := rand.Intn(len(ser))
 		o := &GogoV1{}
-		err := gogoproto.Unmarshal(ser[n], o)
+		err := o.Unmarshal(ser[n])
 		if err != nil {
 			b.Fatalf("goprotobuf failed to unmarshal: %s (%s)", err, ser[n])
 		}
