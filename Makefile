@@ -1,7 +1,7 @@
 test:
 	rm results.txt || true
-	go test -count=1 -bench=. | grep BenchmarkGo > results.txt
-	cd old && go test -count=1 -bench=. | grep BenchmarkGo >> ../results.txt
+	go test -count=1 -bench=. | grep Benchmark_Go > results.txt
+	cd old && go test -count=1 -bench=. | grep Benchmark_Go >> ../results.txt
 	cat results.txt
 
 all: old/structdef-go-v1.pb.go structdef-gogo-v1.pb.go structdef-go-v1.pb.go structdef-go-v2.pb.go

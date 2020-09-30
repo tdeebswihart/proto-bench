@@ -40,7 +40,7 @@ func generateGoV1(n int) []*GoV1 {
 	return a
 }
 
-func BenchmarkGoV1oldMarshal(b *testing.B) {
+func Benchmark_GoV1old_Proto_Marshal(b *testing.B) {
 	data := generateGoV1(b.N)
 	b.ReportAllocs()
 	b.ResetTimer()
@@ -55,7 +55,7 @@ func BenchmarkGoV1oldMarshal(b *testing.B) {
 	b.ReportMetric(float64(serialSize)/float64(b.N), "B/serial")
 }
 
-func BenchmarkGoV1oldUnmarshal(b *testing.B) {
+func Benchmark_GoV1old_Proto_Unmarshal(b *testing.B) {
 	b.StopTimer()
 	data := generateGoV1(b.N)
 	ser := make([][]byte, len(data))
@@ -81,7 +81,7 @@ func BenchmarkGoV1oldUnmarshal(b *testing.B) {
 		}
 	}
 }
-func BenchmarkGoV1MarshalJSON(b *testing.B) {
+func Benchmark_GoV1_JSON_Marshal(b *testing.B) {
 	data := generateGoV1(b.N)
 	marshaler := proto1jsonpb.Marshaler{}
 	b.ReportAllocs()
@@ -98,7 +98,7 @@ func BenchmarkGoV1MarshalJSON(b *testing.B) {
 	b.ReportMetric(float64(serialSize)/float64(b.N), "B/serial")
 }
 
-func BenchmarkGoV1UnmarshalJSON(b *testing.B) {
+func Benchmark_GoV1_JSON_Unmarshal(b *testing.B) {
 	b.StopTimer()
 	data := generateGoV1(b.N)
 	marshaler := proto1jsonpb.Marshaler{}
