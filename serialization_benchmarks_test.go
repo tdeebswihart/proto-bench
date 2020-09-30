@@ -1,14 +1,22 @@
 package protobench
 
 import (
+	"bytes"
 	"fmt"
 	"math/rand"
 	"testing"
 	"time"
 
+	gogojsonpb "github.com/gogo/protobuf/jsonpb"
+	proto1jsonpb "github.com/golang/protobuf/jsonpb"
 	proto1 "github.com/golang/protobuf/proto"
+	proto2json "google.golang.org/protobuf/encoding/protojson"
 	proto2 "google.golang.org/protobuf/proto"
 )
+
+func init(){
+	rand.Seed(time.Now().UnixNano())
+}
 
 func randString(l int) string {
 	buf := make([]byte, l)
@@ -18,11 +26,11 @@ func randString(l int) string {
 	return fmt.Sprintf("%x", buf)[:l]
 }
 
-// github.com/golang/protobuf
+// github.com/golang/protobuf (aka V1)
 
-func generateGoV1() []*GoV1 {
-	a := make([]*GoV1, 0, 1000)
-	for i := 0; i < 1000; i++ {
+func generateGoV1(n int) []*GoV1 {
+	a := make([]*GoV1, 0, n)
+	for i := 0; i < n; i++ {
 		a = append(a, &GoV1{
 			Name:     randString(16),
 			BirthDay: time.Now().UnixNano(),
@@ -36,7 +44,7 @@ func generateGoV1() []*GoV1 {
 }
 
 func BenchmarkGoV1Marshal(b *testing.B) {
-	data := generateGoV1()
+	data := generateGoV1(b.N)
 	b.ReportAllocs()
 	b.ResetTimer()
 	var serialSize int
@@ -52,7 +60,7 @@ func BenchmarkGoV1Marshal(b *testing.B) {
 
 func BenchmarkGoV1Unmarshal(b *testing.B) {
 	b.StopTimer()
-	data := generateGoV1()
+	data := generateGoV1(b.N)
 	ser := make([][]byte, len(data))
 	var serialSize int
 	for i, d := range data {
@@ -77,11 +85,59 @@ func BenchmarkGoV1Unmarshal(b *testing.B) {
 	}
 }
 
-// google.golang.org/protobuf
+func BenchmarkGoV1MarshalJSON(b *testing.B) {
+	data := generateGoV1(b.N)
+	marshaler := proto1jsonpb.Marshaler{}
+	b.ReportAllocs()
+	b.ResetTimer()
+	var serialSize int
+	for i := 0; i < b.N; i++ {
+		var buf bytes.Buffer
+		err := marshaler.Marshal(&buf, data[rand.Intn(len(data))])
+		if err != nil {
+			b.Fatal(err)
+		}
+		serialSize += buf.Len()
+	}
+	b.ReportMetric(float64(serialSize)/float64(b.N), "B/serial")
+}
 
-func generateGoV2() []*GoV2 {
-	a := make([]*GoV2, 0, 1000)
-	for i := 0; i < 1000; i++ {
+func BenchmarkGoV1UnmarshalJSON(b *testing.B) {
+	b.StopTimer()
+	data := generateGoV1(b.N)
+	marshaler := proto1jsonpb.Marshaler{}
+	ser := make([]bytes.Buffer, len(data))
+	var serialSize int
+	for i, d := range data {
+		err := marshaler.Marshal(&ser[i], d)
+		if err != nil {
+			b.Fatal(err)
+		}
+		serialSize += ser[i].Len()
+	}
+	b.ReportMetric(float64(serialSize)/float64(len(data)), "B/serial")
+	b.ReportAllocs()
+	unmarshaler := proto1jsonpb.Unmarshaler{}
+	randomI := randomI(b.N)
+
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		n := randomI[i]
+		o := &GoV1{}
+		err := unmarshaler.Unmarshal(&ser[n], o)
+		if err != nil {
+			b.Fatalf("goprotobuf failed to unmarshal: %s (%s)", err, ser[n].String())
+		}
+	}
+
+}
+
+// google.golang.org/protobuf (aka V2)
+
+func generateGoV2(n int) []*GoV2 {
+	a := make([]*GoV2, 0, n)
+	for i := 0; i < n; i++ {
 		a = append(a, &GoV2{
 			Name:     randString(16),
 			BirthDay: time.Now().UnixNano(),
@@ -95,7 +151,7 @@ func generateGoV2() []*GoV2 {
 }
 
 func BenchmarkGoV2Marshal(b *testing.B) {
-	data := generateGoV2()
+	data := generateGoV2(b.N)
 	b.ReportAllocs()
 	b.ResetTimer()
 	var serialSize int
@@ -111,7 +167,7 @@ func BenchmarkGoV2Marshal(b *testing.B) {
 
 func BenchmarkGoV2Unmarshal(b *testing.B) {
 	b.StopTimer()
-	data := generateGoV2()
+	data := generateGoV2(b.N)
 	ser := make([][]byte, len(data))
 	var serialSize int
 	for i, d := range data {
@@ -136,11 +192,54 @@ func BenchmarkGoV2Unmarshal(b *testing.B) {
 	}
 }
 
-// github.com/gogo/protobuf/proto
+func BenchmarkGoV2MarshalJSON(b *testing.B) {
+	data := generateGoV2(b.N)
+	b.ReportAllocs()
+	b.ResetTimer()
+	var serialSize int
+	for i := 0; i < b.N; i++ {
+		bytes, err := proto2json.Marshal(data[rand.Intn(len(data))])
+		if err != nil {
+			b.Fatal(err)
+		}
+		serialSize += len(bytes)
+	}
+	b.ReportMetric(float64(serialSize)/float64(b.N), "B/serial")
+}
 
-func generateGogoV1() []*GogoV1 {
-	a := make([]*GogoV1, 0, 1000)
-	for i := 0; i < 1000; i++ {
+func BenchmarkGoV2UnmarshalJSON(b *testing.B) {
+	b.StopTimer()
+	data := generateGoV2(b.N)
+	ser := make([][]byte, len(data))
+	var serialSize int
+	for i, d := range data {
+		var err error
+		ser[i], err = proto2json.Marshal(d)
+		if err != nil {
+			b.Fatal(err)
+		}
+		serialSize += len(ser[i])
+	}
+	b.ReportMetric(float64(serialSize)/float64(len(data)), "B/serial")
+	b.ReportAllocs()
+	randomI := randomI(b.N)
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		n := randomI[i]
+		o := &GoV2{}
+		err := proto2json.Unmarshal(ser[n], o)
+		if err != nil {
+			b.Fatalf("goprotobuf failed to unmarshal: %s (%s)", err, ser[n])
+		}
+	}
+}
+
+// github.com/gogo/protobuf/proto (aka gogo)
+
+func generateGogoV1(n int) []*GogoV1 {
+	a := make([]*GogoV1, 0, n)
+	for i := 0; i < n; i++ {
 		a = append(a, &GogoV1{
 			Name:     randString(16),
 			BirthDay: time.Now().UnixNano(),
@@ -154,7 +253,7 @@ func generateGogoV1() []*GogoV1 {
 }
 
 func BenchmarkGogoV1Marshal(b *testing.B) {
-	data := generateGogoV1()
+	data := generateGogoV1(b.N)
 	b.ReportAllocs()
 	b.ResetTimer()
 	var serialSize int
@@ -170,7 +269,7 @@ func BenchmarkGogoV1Marshal(b *testing.B) {
 
 func BenchmarkGogoV1Unmarshal(b *testing.B) {
 	b.StopTimer()
-	data := generateGogoV1()
+	data := generateGogoV1(b.N)
 	ser := make([][]byte, len(data))
 	var serialSize int
 	for i, d := range data {
@@ -190,7 +289,66 @@ func BenchmarkGogoV1Unmarshal(b *testing.B) {
 		o := &GogoV1{}
 		err := o.Unmarshal(ser[n])
 		if err != nil {
-			b.Fatalf("goprotobuf failed to unmarshal: %s (%s)", err, ser[n])
+			b.Fatalf("gogoprotobuf failed to unmarshal: %s (%s)", err, ser[n])
 		}
 	}
+}
+
+
+func BenchmarkGogoV1MarshalJSON(b *testing.B) {
+	data := generateGoV1(b.N)
+	marshaler := gogojsonpb.Marshaler{}
+	b.ReportAllocs()
+	b.ResetTimer()
+	var serialSize int
+	for i := 0; i < b.N; i++ {
+		var buf bytes.Buffer
+		err := marshaler.Marshal(&buf, data[rand.Intn(len(data))])
+		if err != nil {
+			b.Fatal(err)
+		}
+		serialSize += buf.Len()
+	}
+	b.ReportMetric(float64(serialSize)/float64(b.N), "B/serial")
+}
+
+func BenchmarkGogoV1UnmarshalJSON(b *testing.B) {
+	b.StopTimer()
+	data := generateGoV1(b.N)
+	marshaler := gogojsonpb.Marshaler{}
+	ser := make([]bytes.Buffer, len(data))
+	var serialSize int
+	for i, d := range data {
+		err := marshaler.Marshal(&ser[i], d)
+		if err != nil {
+			b.Fatal(err)
+		}
+		serialSize += ser[i].Len()
+	}
+	b.ReportMetric(float64(serialSize)/float64(len(data)), "B/serial")
+	b.ReportAllocs()
+	unmarshaler := gogojsonpb.Unmarshaler{}
+	randomI := randomI(b.N)
+
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		n := randomI[i]
+		o := &GoV1{}
+		err := unmarshaler.Unmarshal(&ser[n], o)
+		if err != nil {
+			b.Fatalf("gogoprotobuf failed to unmarshal: %s (%s)", err, ser[n].String())
+		}
+	}
+}
+
+func randomI(n int)[]int{
+	randomI := make([]int, n)
+	for i := 0; i < len(randomI); i++ {
+		randomI[i] = i
+	}
+	rand.Shuffle(len(randomI), func(i, j int) {
+		randomI[i], randomI[j] = randomI[j], randomI[i]
+	})
+	return randomI
 }
