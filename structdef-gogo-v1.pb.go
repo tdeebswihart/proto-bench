@@ -23,13 +23,47 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+type TypeGoGoV1 int32
+
+const (
+	TypeGoGoV1_TYPEGOGOV1_UNSPECIFIED TypeGoGoV1 = 0
+	TypeGoGoV1_TYPEGOGOV1_R           TypeGoGoV1 = 1
+	TypeGoGoV1_TYPEGOGOV1_S           TypeGoGoV1 = 2
+)
+
+var TypeGoGoV1_name = map[int32]string{
+	0: "TYPEGOGOV1_UNSPECIFIED",
+	1: "TYPEGOGOV1_R",
+	2: "TYPEGOGOV1_S",
+}
+
+var TypeGoGoV1_value = map[string]int32{
+	"TYPEGOGOV1_UNSPECIFIED": 0,
+	"TYPEGOGOV1_R":           1,
+	"TYPEGOGOV1_S":           2,
+}
+
+func (x TypeGoGoV1) String() string {
+	return proto.EnumName(TypeGoGoV1_name, int32(x))
+}
+
+func (TypeGoGoV1) EnumDescriptor() ([]byte, []int) {
+	return fileDescriptor_b9d837b81e69b7b4, []int{0}
+}
+
 type GogoV1 struct {
-	Name     string  `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
-	BirthDay int64   `protobuf:"varint,2,opt,name=birthDay,proto3" json:"birthDay,omitempty"`
-	Phone    string  `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
-	Siblings int32   `protobuf:"varint,4,opt,name=siblings,proto3" json:"siblings,omitempty"`
-	Spouse   bool    `protobuf:"varint,5,opt,name=spouse,proto3" json:"spouse,omitempty"`
-	Money    float64 `protobuf:"fixed64,6,opt,name=money,proto3" json:"money,omitempty"`
+	Name     string     `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	BirthDay int64      `protobuf:"varint,2,opt,name=birthDay,proto3" json:"birthDay,omitempty"`
+	Phone    string     `protobuf:"bytes,3,opt,name=phone,proto3" json:"phone,omitempty"`
+	Siblings int32      `protobuf:"varint,4,opt,name=siblings,proto3" json:"siblings,omitempty"`
+	Spouse   bool       `protobuf:"varint,5,opt,name=spouse,proto3" json:"spouse,omitempty"`
+	Money    float64    `protobuf:"fixed64,6,opt,name=money,proto3" json:"money,omitempty"`
+	Type     TypeGoGoV1 `protobuf:"varint,7,opt,name=type,proto3,enum=protobench.TypeGoGoV1" json:"type,omitempty"`
+	// Types that are valid to be assigned to Values:
+	//	*GogoV1_ValueS
+	//	*GogoV1_ValueI
+	//	*GogoV1_ValueD
+	Values isGogoV1_Values `protobuf_oneof:"values"`
 }
 
 func (m *GogoV1) Reset()         { *m = GogoV1{} }
@@ -64,6 +98,33 @@ func (m *GogoV1) XXX_DiscardUnknown() {
 }
 
 var xxx_messageInfo_GogoV1 proto.InternalMessageInfo
+
+type isGogoV1_Values interface {
+	isGogoV1_Values()
+	MarshalTo([]byte) (int, error)
+	Size() int
+}
+
+type GogoV1_ValueS struct {
+	ValueS string `protobuf:"bytes,8,opt,name=value_s,json=valueS,proto3,oneof" json:"value_s,omitempty"`
+}
+type GogoV1_ValueI struct {
+	ValueI int32 `protobuf:"varint,9,opt,name=value_i,json=valueI,proto3,oneof" json:"value_i,omitempty"`
+}
+type GogoV1_ValueD struct {
+	ValueD float64 `protobuf:"fixed64,10,opt,name=value_d,json=valueD,proto3,oneof" json:"value_d,omitempty"`
+}
+
+func (*GogoV1_ValueS) isGogoV1_Values() {}
+func (*GogoV1_ValueI) isGogoV1_Values() {}
+func (*GogoV1_ValueD) isGogoV1_Values() {}
+
+func (m *GogoV1) GetValues() isGogoV1_Values {
+	if m != nil {
+		return m.Values
+	}
+	return nil
+}
 
 func (m *GogoV1) GetName() string {
 	if m != nil {
@@ -107,29 +168,75 @@ func (m *GogoV1) GetMoney() float64 {
 	return 0
 }
 
+func (m *GogoV1) GetType() TypeGoGoV1 {
+	if m != nil {
+		return m.Type
+	}
+	return TypeGoGoV1_TYPEGOGOV1_UNSPECIFIED
+}
+
+func (m *GogoV1) GetValueS() string {
+	if x, ok := m.GetValues().(*GogoV1_ValueS); ok {
+		return x.ValueS
+	}
+	return ""
+}
+
+func (m *GogoV1) GetValueI() int32 {
+	if x, ok := m.GetValues().(*GogoV1_ValueI); ok {
+		return x.ValueI
+	}
+	return 0
+}
+
+func (m *GogoV1) GetValueD() float64 {
+	if x, ok := m.GetValues().(*GogoV1_ValueD); ok {
+		return x.ValueD
+	}
+	return 0
+}
+
+// XXX_OneofWrappers is for the internal use of the proto package.
+func (*GogoV1) XXX_OneofWrappers() []interface{} {
+	return []interface{}{
+		(*GogoV1_ValueS)(nil),
+		(*GogoV1_ValueI)(nil),
+		(*GogoV1_ValueD)(nil),
+	}
+}
+
 func init() {
+	proto.RegisterEnum("protobench.TypeGoGoV1", TypeGoGoV1_name, TypeGoGoV1_value)
 	proto.RegisterType((*GogoV1)(nil), "protobench.GogoV1")
 }
 
 func init() { proto.RegisterFile("structdef-gogo-v1.proto", fileDescriptor_b9d837b81e69b7b4) }
 
 var fileDescriptor_b9d837b81e69b7b4 = []byte{
-	// 234 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x44, 0xcf, 0x31, 0x4b, 0x03, 0x31,
-	0x18, 0xc6, 0xf1, 0x7b, 0x6d, 0xef, 0xa8, 0x19, 0x83, 0x68, 0x70, 0x08, 0xc1, 0x29, 0x08, 0x6d,
-	0x29, 0x8e, 0x6e, 0x52, 0x70, 0xcf, 0xe0, 0xe0, 0x76, 0x39, 0x63, 0x12, 0xe8, 0xe5, 0x3d, 0x2e,
-	0x39, 0xb1, 0xdf, 0xc2, 0xd1, 0x8f, 0xe4, 0xd8, 0xd1, 0x51, 0xee, 0xbe, 0x88, 0xf4, 0x5a, 0xda,
-	0x29, 0xff, 0xdf, 0xf0, 0x04, 0x5e, 0x72, 0x13, 0x53, 0xdb, 0x55, 0xe9, 0xcd, 0xbc, 0xcf, 0x2d,
-	0x5a, 0x9c, 0x7f, 0xac, 0x16, 0x4d, 0x8b, 0x09, 0x29, 0x19, 0x1f, 0x6d, 0x42, 0xe5, 0xee, 0xbe,
-	0x81, 0x14, 0xcf, 0x68, 0xf1, 0x65, 0x45, 0x29, 0x99, 0x86, 0xb2, 0x36, 0x0c, 0x04, 0xc8, 0x4b,
-	0x35, 0x36, 0xbd, 0x25, 0x33, 0xed, 0xdb, 0xe4, 0xd6, 0xe5, 0x96, 0x5d, 0x08, 0x90, 0x13, 0x75,
-	0x32, 0xbd, 0x22, 0x79, 0xe3, 0x30, 0x18, 0x36, 0x19, 0x07, 0x07, 0xec, 0x17, 0xd1, 0xeb, 0x8d,
-	0x0f, 0x36, 0xb2, 0xa9, 0x00, 0x99, 0xab, 0x93, 0xe9, 0x35, 0x29, 0x62, 0x83, 0x5d, 0x34, 0x2c,
-	0x17, 0x20, 0x67, 0xea, 0xa8, 0xfd, 0x4f, 0x35, 0x06, 0xb3, 0x65, 0x85, 0x00, 0x09, 0xea, 0x80,
-	0xa7, 0xf5, 0x4f, 0xcf, 0x61, 0xd7, 0x73, 0xf8, 0xeb, 0x39, 0x7c, 0x0d, 0x3c, 0xdb, 0x0d, 0x3c,
-	0xfb, 0x1d, 0x78, 0xf6, 0x7a, 0x6f, 0x7d, 0x72, 0x9d, 0x5e, 0x54, 0x58, 0x2f, 0xcb, 0x8d, 0xf9,
-	0x8c, 0x2e, 0xf9, 0xb0, 0x3c, 0x5f, 0xf5, 0x78, 0x4e, 0x5d, 0x8c, 0xfd, 0xf0, 0x1f, 0x00, 0x00,
-	0xff, 0xff, 0x5a, 0xf7, 0xbb, 0xc9, 0x0e, 0x01, 0x00, 0x00,
+	// 355 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x8f, 0xcf, 0x6a, 0xea, 0x40,
+	0x14, 0x87, 0x33, 0xfe, 0x89, 0xf1, 0x70, 0xb9, 0x84, 0xe1, 0xe2, 0x9d, 0xeb, 0x22, 0x84, 0xbb,
+	0x0a, 0x82, 0x91, 0xdc, 0xbb, 0xec, 0xce, 0xc6, 0xa6, 0x42, 0xa9, 0x32, 0x5a, 0xa1, 0xdd, 0x48,
+	0xa2, 0xd3, 0x24, 0xa0, 0x99, 0xe0, 0x24, 0xd2, 0xbc, 0x45, 0xdf, 0xa0, 0xaf, 0xd3, 0xa5, 0xcb,
+	0x2e, 0x8b, 0xbe, 0x48, 0x49, 0x2c, 0x49, 0xe9, 0x6a, 0x7e, 0xdf, 0xf9, 0xe6, 0xcc, 0x39, 0x03,
+	0xbf, 0x45, 0xb2, 0x4b, 0x57, 0xc9, 0x9a, 0x3d, 0xf6, 0x7d, 0xee, 0xf3, 0xfe, 0xde, 0x32, 0xe3,
+	0x1d, 0x4f, 0x38, 0x86, 0xe2, 0xf0, 0x58, 0xb4, 0x0a, 0xfe, 0xbe, 0xd4, 0x40, 0x76, 0xb8, 0xcf,
+	0x17, 0x16, 0xc6, 0xd0, 0x88, 0xdc, 0x2d, 0x23, 0x48, 0x47, 0x46, 0x9b, 0x16, 0x19, 0x77, 0x41,
+	0xf1, 0xc2, 0x5d, 0x12, 0xd8, 0x6e, 0x46, 0x6a, 0x3a, 0x32, 0xea, 0xb4, 0x64, 0xfc, 0x0b, 0x9a,
+	0x71, 0xc0, 0x23, 0x46, 0xea, 0x45, 0xc3, 0x19, 0xf2, 0x0e, 0x11, 0x7a, 0x9b, 0x30, 0xf2, 0x05,
+	0x69, 0xe8, 0xc8, 0x68, 0xd2, 0x92, 0x71, 0x07, 0x64, 0x11, 0xf3, 0x54, 0x30, 0xd2, 0xd4, 0x91,
+	0xa1, 0xd0, 0x4f, 0xca, 0x5f, 0xda, 0xf2, 0x88, 0x65, 0x44, 0xd6, 0x91, 0x81, 0xe8, 0x19, 0x70,
+	0x0f, 0x1a, 0x49, 0x16, 0x33, 0xd2, 0xd2, 0x91, 0xf1, 0xf3, 0x5f, 0xc7, 0xac, 0xb6, 0x36, 0xe7,
+	0x59, 0xcc, 0x1c, 0xee, 0xf0, 0x85, 0x45, 0x8b, 0x3b, 0xf8, 0x0f, 0xb4, 0xf6, 0xee, 0x26, 0x65,
+	0x4b, 0x41, 0x94, 0x7c, 0x9b, 0x6b, 0x89, 0xca, 0x45, 0x61, 0x56, 0xa9, 0x90, 0xb4, 0xf3, 0x7d,
+	0x4a, 0x35, 0xae, 0xd4, 0x9a, 0x40, 0x3e, 0xb9, 0x54, 0xf6, 0x50, 0x81, 0x73, 0x12, 0xbd, 0x1b,
+	0x80, 0x6a, 0x1c, 0xee, 0x42, 0x67, 0x7e, 0x3f, 0x1d, 0x39, 0x13, 0x67, 0xb2, 0xb0, 0x96, 0x77,
+	0xb7, 0xb3, 0xe9, 0xe8, 0x72, 0x7c, 0x35, 0x1e, 0xd9, 0xaa, 0x84, 0x55, 0xf8, 0xf1, 0xc5, 0x51,
+	0x15, 0x7d, 0xab, 0xcc, 0xd4, 0xda, 0xd0, 0x7e, 0x3d, 0x6a, 0xe8, 0x70, 0xd4, 0xd0, 0xfb, 0x51,
+	0x43, 0xcf, 0x27, 0x4d, 0x3a, 0x9c, 0x34, 0xe9, 0xed, 0xa4, 0x49, 0x0f, 0x3d, 0x3f, 0x4c, 0x82,
+	0xd4, 0x33, 0x57, 0x7c, 0x3b, 0x70, 0x37, 0xec, 0x49, 0x04, 0x49, 0x18, 0x0d, 0xaa, 0x4f, 0x5f,
+	0x54, 0xd1, 0x93, 0x8b, 0xfc, 0xff, 0x23, 0x00, 0x00, 0xff, 0xff, 0x82, 0x51, 0xbf, 0xfd, 0xe3,
+	0x01, 0x00, 0x00,
 }
 
 func (m *GogoV1) Marshal() (dAtA []byte, err error) {
@@ -152,6 +259,20 @@ func (m *GogoV1) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.Values != nil {
+		{
+			size := m.Values.Size()
+			i -= size
+			if _, err := m.Values.MarshalTo(dAtA[i:]); err != nil {
+				return 0, err
+			}
+		}
+	}
+	if m.Type != 0 {
+		i = encodeVarintStructdefGogoV1(dAtA, i, uint64(m.Type))
+		i--
+		dAtA[i] = 0x38
+	}
 	if m.Money != 0 {
 		i -= 8
 		encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(math.Float64bits(float64(m.Money))))
@@ -195,6 +316,45 @@ func (m *GogoV1) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *GogoV1_ValueS) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GogoV1_ValueS) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	i -= len(m.ValueS)
+	copy(dAtA[i:], m.ValueS)
+	i = encodeVarintStructdefGogoV1(dAtA, i, uint64(len(m.ValueS)))
+	i--
+	dAtA[i] = 0x42
+	return len(dAtA) - i, nil
+}
+func (m *GogoV1_ValueI) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GogoV1_ValueI) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	i = encodeVarintStructdefGogoV1(dAtA, i, uint64(m.ValueI))
+	i--
+	dAtA[i] = 0x48
+	return len(dAtA) - i, nil
+}
+func (m *GogoV1_ValueD) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GogoV1_ValueD) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	i -= 8
+	encoding_binary.LittleEndian.PutUint64(dAtA[i:], uint64(math.Float64bits(float64(m.ValueD))))
+	i--
+	dAtA[i] = 0x51
+	return len(dAtA) - i, nil
+}
 func encodeVarintStructdefGogoV1(dAtA []byte, offset int, v uint64) int {
 	offset -= sovStructdefGogoV1(v)
 	base := offset
@@ -232,6 +392,41 @@ func (m *GogoV1) Size() (n int) {
 	if m.Money != 0 {
 		n += 9
 	}
+	if m.Type != 0 {
+		n += 1 + sovStructdefGogoV1(uint64(m.Type))
+	}
+	if m.Values != nil {
+		n += m.Values.Size()
+	}
+	return n
+}
+
+func (m *GogoV1_ValueS) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = len(m.ValueS)
+	n += 1 + l + sovStructdefGogoV1(uint64(l))
+	return n
+}
+func (m *GogoV1_ValueI) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	n += 1 + sovStructdefGogoV1(uint64(m.ValueI))
+	return n
+}
+func (m *GogoV1_ValueD) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	n += 9
 	return n
 }
 
@@ -403,6 +598,88 @@ func (m *GogoV1) Unmarshal(dAtA []byte) error {
 			v = uint64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
 			iNdEx += 8
 			m.Money = float64(math.Float64frombits(v))
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Type", wireType)
+			}
+			m.Type = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStructdefGogoV1
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Type |= TypeGoGoV1(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ValueS", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStructdefGogoV1
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthStructdefGogoV1
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthStructdefGogoV1
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Values = &GogoV1_ValueS{string(dAtA[iNdEx:postIndex])}
+			iNdEx = postIndex
+		case 9:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ValueI", wireType)
+			}
+			var v int32
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStructdefGogoV1
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.Values = &GogoV1_ValueI{v}
+		case 10:
+			if wireType != 1 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ValueD", wireType)
+			}
+			var v uint64
+			if (iNdEx + 8) > l {
+				return io.ErrUnexpectedEOF
+			}
+			v = uint64(encoding_binary.LittleEndian.Uint64(dAtA[iNdEx:]))
+			iNdEx += 8
+			m.Values = &GogoV1_ValueD{float64(math.Float64frombits(v))}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipStructdefGogoV1(dAtA[iNdEx:])

@@ -10,4 +10,16 @@ message GoV1 {
   int32 siblings = 4;
   bool spouse = 5;
   double money = 6;
+  TypeV1 type = 7;
+  oneof values {
+    string value_s = 8;
+    int32 value_i = 9;
+    double value_d = 10;
+  }
+}
+
+enum TypeV1 {
+  TYPEV1_UNSPECIFIED = 0;
+  TYPEV1_R = 1;
+  TYPEV1_S = 2;
 }

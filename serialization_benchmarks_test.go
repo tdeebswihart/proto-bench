@@ -14,7 +14,7 @@ import (
 	proto2 "google.golang.org/protobuf/proto"
 )
 
-func init(){
+func init() {
 	rand.Seed(time.Now().UnixNano())
 }
 
@@ -38,6 +38,8 @@ func generateGoV1(n int) []*GoV1 {
 			Siblings: rand.Int31n(5),
 			Spouse:   rand.Intn(2) == 1,
 			Money:    rand.Float64(),
+			Type:     TypeV1(rand.Intn(4)),
+			Values:   &GoV1_ValueS{ValueS: randString(5)},
 		})
 	}
 	return a
@@ -145,6 +147,8 @@ func generateGoV2(n int) []*GoV2 {
 			Siblings: rand.Int31n(5),
 			Spouse:   rand.Intn(2) == 1,
 			Money:    rand.Float64(),
+			Type:     TypeV2(rand.Intn(4)),
+			Values:   &GoV2_ValueS{ValueS: randString(5)},
 		})
 	}
 	return a
@@ -247,6 +251,8 @@ func generateGogoV1(n int) []*GogoV1 {
 			Siblings: rand.Int31n(5),
 			Spouse:   rand.Intn(2) == 1,
 			Money:    rand.Float64(),
+			Type:     TypeGoGoV1(rand.Intn(4)),
+			Values:   &GogoV1_ValueS{ValueS: randString(5)},
 		})
 	}
 	return a
@@ -294,9 +300,8 @@ func Benchmark_GogoV1_Proto_Unmarshal(b *testing.B) {
 	}
 }
 
-
 func Benchmark_GogoV1_JSON_Marshal(b *testing.B) {
-	data := generateGoV1(b.N)
+	data := generateGogoV1(b.N)
 	marshaler := gogojsonpb.Marshaler{}
 	b.ReportAllocs()
 	b.ResetTimer()
@@ -314,7 +319,7 @@ func Benchmark_GogoV1_JSON_Marshal(b *testing.B) {
 
 func Benchmark_GogoV1_JSON_Unmarshal(b *testing.B) {
 	b.StopTimer()
-	data := generateGoV1(b.N)
+	data := generateGogoV1(b.N)
 	marshaler := gogojsonpb.Marshaler{}
 	ser := make([]bytes.Buffer, len(data))
 	var serialSize int
@@ -334,7 +339,7 @@ func Benchmark_GogoV1_JSON_Unmarshal(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		n := randomI[i]
-		o := &GoV1{}
+		o := &GogoV1{}
 		err := unmarshaler.Unmarshal(&ser[n], o)
 		if err != nil {
 			b.Fatalf("gogoprotobuf failed to unmarshal: %s (%s)", err, ser[n].String())
@@ -342,7 +347,7 @@ func Benchmark_GogoV1_JSON_Unmarshal(b *testing.B) {
 	}
 }
 
-func randomI(n int)[]int{
+func randomI(n int) []int {
 	randomI := make([]int, n)
 	for i := 0; i < len(randomI); i++ {
 		randomI[i] = i

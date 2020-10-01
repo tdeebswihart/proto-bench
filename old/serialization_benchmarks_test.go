@@ -35,6 +35,8 @@ func generateGoV1(n int) []*GoV1 {
 			Siblings: rand.Int31n(5),
 			Spouse:   rand.Intn(2) == 1,
 			Money:    rand.Float64(),
+			Type:     TypeV1(rand.Intn(4)),
+			Values:   &GoV1_ValueS{ValueS: randString(5)},
 		})
 	}
 	return a
