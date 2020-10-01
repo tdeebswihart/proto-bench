@@ -45,26 +45,22 @@ type Go struct {
 
 benchmark                                | iter      | time/iter | bytes/op  |  allocs/op |tt.sec  | tt.kb        | ns/alloc
 -----------------------------------------|-----------|-----------|-----------|------------|--------|--------------|-----------
-Benchmark_GoV1_Proto_Marshal-4           |    1401818 |    827 ns/op |    51 |  64 |   1.16 |    7233 |   12.92
-Benchmark_GoV1_Proto_Unmarshal-4         |    1829254 |    687 ns/op |    51 | 128 |   1.26 |    9438 |    5.37
-Benchmark_GoV2_Proto_Marshal-4           |    1510862 |    822 ns/op |    51 |  64 |   1.24 |    7796 |   12.84
-Benchmark_GoV2_Proto_Unmarshal-4         |    1735849 |    711 ns/op |    51 | 128 |   1.23 |    8956 |    5.55
-Benchmark_GogoV1_Proto_Marshal-4         |    2045078 |    604 ns/op |    51 |  64 |   1.24 |   10552 |    9.44
-Benchmark_GogoV1_Proto_Unmarshal-4       |    2538510 |    531 ns/op |    51 |  32 |   1.35 |   13098 |   16.59
-Benchmark_GoV1old_Proto_Marshal-4        |    1586356 |    755 ns/op |    51 |  64 |   1.20 |    8185 |   11.80
-Benchmark_GoV1old_Proto_Unmarshal-4      |    2228892 |    582 ns/op |    51 | 128 |   1.30 |   11501 |    4.55
-
-
-benchmark                                | iter      | time/iter | bytes/op  |  allocs/op |tt.sec  | tt.kb        | ns/alloc
------------------------------------------|-----------|-----------|-----------|------------|--------|--------------|-----------
-Benchmark_GoV1_JSON_Marshal-4            |     290047 |   4018 ns/op |   126 | 771 |   1.17 |    3654 |    5.21
-Benchmark_GoV1_JSON_Unmarshal-4          |      94789 |  12648 ns/op |   126 | 3557 |   1.20 |    1194 |    3.56
-Benchmark_GoV2_JSON_Marshal-4            |     331656 |   3564 ns/op |   126 | 582 |   1.18 |    4178 |    6.12
-Benchmark_GoV2_JSON_Unmarshal-4          |     282900 |   4630 ns/op |   126 | 621 |   1.31 |    3564 |    7.46
-Benchmark_GogoV1_JSON_Marshal-4          |      88027 |  13594 ns/op |   126 | 3405 |   1.20 |    1109 |    3.99
-Benchmark_GogoV1_JSON_Unmarshal-4        |      73362 |  16428 ns/op |   126 | 3974 |   1.21 |     924 |    4.13
-Benchmark_GoV1old_JSON_Marshal-4         |     100249 |  12146 ns/op |   126 | 2965 |   1.22 |    1263 |    4.10
-Benchmark_GoV1old_JSON_Unmarshal-4       |      75784 |  16610 ns/op |   126 | 3973 |   1.26 |     954 |    4.18
+Benchmark_JSON_GogoV1_Marshal-4          |      62697 |  18257 ns/op |   156 | 4562 |   1.14 |     978 |    4.00
+Benchmark_JSON_GogoV1_Unmarshal-4        |      58150 |  20696 ns/op |   156 | 4603 |   1.20 |     907 |    4.50
+Benchmark_JSON_GoV1_Marshal-4            |     220243 |   5507 ns/op |   154 | 1002 |   1.21 |    3391 |    5.50
+Benchmark_JSON_GoV1old_Marshal-4         |      67186 |  16358 ns/op |   154 | 4016 |   1.10 |    1034 |    4.07
+Benchmark_JSON_GoV1old_Unmarshal-4       |      58538 |  19958 ns/op |   154 | 4681 |   1.17 |     901 |    4.26
+Benchmark_JSON_GoV1_Unmarshal-4          |      70801 |  15931 ns/op |   154 | 4104 |   1.13 |    1090 |    3.88
+Benchmark_JSON_GoV2_Marshal-4            |     255117 |   4990 ns/op |   154 | 761 |   1.27 |    3928 |    6.56
+Benchmark_JSON_GoV2_Unmarshal-4          |     210552 |   5490 ns/op |   154 | 741 |   1.16 |    3242 |    7.41
+Benchmark_Proto_GogoV1_Marshal-4         |    1550792 |    816 ns/op |    60 |  64 |   1.27 |    9320 |   12.75
+Benchmark_Proto_GogoV1_Unmarshal-4       |    2682651 |    478 ns/op |    60 |  48 |   1.28 |   16122 |    9.96
+Benchmark_Proto_GoV1_Marshal-4           |    1000000 |   1287 ns/op |    60 |  64 |   1.29 |    6010 |   20.11
+Benchmark_Proto_GoV1old_Marshal-4        |    1000000 |   1227 ns/op |    60 |  72 |   1.23 |    6010 |   17.04
+Benchmark_Proto_GoV1old_Unmarshal-4      |    1445637 |    868 ns/op |    60 | 160 |   1.25 |    8688 |    5.42
+Benchmark_Proto_GoV1_Unmarshal-4         |    1226025 |    997 ns/op |    60 | 176 |   1.22 |    7368 |    5.66
+Benchmark_Proto_GoV2_Marshal-4           |    1000000 |   1225 ns/op |    60 |  64 |   1.23 |    6010 |   19.14
+Benchmark_Proto_GoV2_Unmarshal-4         |    1272902 |    964 ns/op |    60 | 176 |   1.23 |    7650 |    5.48
 
 
 Totals:
@@ -72,15 +68,11 @@ Totals:
 
 benchmark                                | iter  | time/iter | bytes/op  |  allocs/op |tt.sec  | tt.kb        | ns/alloc
 -----------------------------------------|-------|-----------|-----------|------------|--------|--------------|-----------
-Benchmark_GogoV1_Proto_-4                |    4583588 |   1135 ns/op |   103 |  96 |   5.20 |   47302 |   11.82
-Benchmark_GoV1old_Proto_-4               |    3815248 |   1337 ns/op |   103 | 192 |   5.10 |   39373 |    6.96
-Benchmark_GoV1_Proto_-4                  |    3231072 |   1514 ns/op |   103 | 192 |   4.89 |   33344 |    7.89
-Benchmark_GoV2_Proto_-4                  |    3246711 |   1533 ns/op |   103 | 192 |   4.98 |   33506 |    7.98
-
-
-benchmark                                | iter  | time/iter | bytes/op  |  allocs/op |tt.sec  | tt.kb        | ns/alloc
------------------------------------------|-------|-----------|-----------|------------|--------|--------------|-----------
-Benchmark_GoV2_JSON_-4                   |     614556 |   8194 ns/op |   252 | 1203 |   5.04 |   15486 |    6.81
-Benchmark_GoV1_JSON_-4                   |     384836 |  16666 ns/op |   252 | 4328 |   6.41 |    9697 |    3.85
-Benchmark_GoV1old_JSON_-4                |     176033 |  28756 ns/op |   252 | 6938 |   5.06 |    4436 |    4.14
-Benchmark_GogoV1_JSON_-4                 |     161389 |  30022 ns/op |   252 | 7379 |   4.85 |    4067 |    4.07
+Benchmark_Proto_GogoV1_-4                |    4233443 |   1294 ns/op |   120 | 112 |   5.48 |   50885 |   11.55
+Benchmark_Proto_GoV1old_-4               |    2445637 |   2095 ns/op |   120 | 232 |   5.12 |   29396 |    9.03
+Benchmark_Proto_GoV2_-4                  |    2272902 |   2189 ns/op |   120 | 240 |   4.98 |   27320 |    9.12
+Benchmark_Proto_GoV1_-4                  |    2226025 |   2284 ns/op |   120 | 240 |   5.08 |   26756 |    9.52
+Benchmark_JSON_GoV2_-4                   |     465669 |  10480 ns/op |   308 | 1502 |   4.88 |   14342 |    6.98
+Benchmark_JSON_GoV1_-4                   |     291044 |  21438 ns/op |   308 | 5106 |   6.24 |    8964 |    4.20
+Benchmark_JSON_GoV1old_-4                |     125724 |  36316 ns/op |   308 | 8697 |   4.57 |    3872 |    4.18
+Benchmark_JSON_GogoV1_-4                 |     120847 |  38953 ns/op |   312 | 9165 |   4.71 |    3770 |    4.25
