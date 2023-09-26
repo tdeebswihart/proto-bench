@@ -347,6 +347,110 @@ func Benchmark_GogoV1_JSON_Unmarshal(b *testing.B) {
 	}
 }
 
+// github.com/planetscale/vtprotobuf (aka vtproto)
+
+func generateVTProto(n int) []*VTProto {
+	a := make([]*VTProto, 0, n)
+	for i := 0; i < n; i++ {
+		a = append(a, &VTProto{
+			Name:     randString(16),
+			BirthDay: time.Now().UnixNano(),
+			Phone:    randString(10),
+			Siblings: rand.Int31n(5),
+			Spouse:   rand.Intn(2) == 1,
+			Money:    rand.Float64(),
+			Type:     TypeVTProtoV2(rand.Intn(4)),
+			Values:   &VTProto_ValueS{ValueS: randString(5)},
+		})
+	}
+	return a
+}
+
+func Benchmark_VTProto_Proto_Marshal(b *testing.B) {
+	data := generateVTProto(b.N)
+	b.ReportAllocs()
+	b.ResetTimer()
+	var serialSize int
+	for i := 0; i < b.N; i++ {
+		bytes, err := data[rand.Intn(len(data))].MarshalVT()
+		if err != nil {
+			b.Fatal(err)
+		}
+		serialSize += len(bytes)
+	}
+	b.ReportMetric(float64(serialSize)/float64(b.N), "B/serial")
+}
+
+func Benchmark_VTProto_Proto_Unmarshal(b *testing.B) {
+	b.StopTimer()
+	data := generateVTProto(b.N)
+	ser := make([][]byte, len(data))
+	var serialSize int
+	for i, d := range data {
+		var err error
+		ser[i], err = d.MarshalVT()
+		if err != nil {
+			b.Fatal(err)
+		}
+		serialSize += len(ser[i])
+	}
+	b.ReportMetric(float64(serialSize)/float64(len(data)), "B/serial")
+	b.ReportAllocs()
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		n := rand.Intn(len(ser))
+		o := &VTProto{}
+		err := o.UnmarshalVT(ser[n])
+		if err != nil {
+			b.Fatalf("goprotobuf failed to unmarshal: %s (%s)", err, ser[n])
+		}
+	}
+}
+
+func Benchmark_VTProto_JSON_Marshal(b *testing.B) {
+	data := generateVTProto(b.N)
+	b.ReportAllocs()
+	b.ResetTimer()
+	var serialSize int
+	for i := 0; i < b.N; i++ {
+		bytes, err := proto2json.Marshal(data[rand.Intn(len(data))])
+		if err != nil {
+			b.Fatal(err)
+		}
+		serialSize += len(bytes)
+	}
+	b.ReportMetric(float64(serialSize)/float64(b.N), "B/serial")
+}
+
+func Benchmark_VTProto_JSON_Unmarshal(b *testing.B) {
+	b.StopTimer()
+	data := generateVTProto(b.N)
+	ser := make([][]byte, len(data))
+	var serialSize int
+	for i, d := range data {
+		var err error
+		ser[i], err = proto2json.Marshal(d)
+		if err != nil {
+			b.Fatal(err)
+		}
+		serialSize += len(ser[i])
+	}
+	b.ReportMetric(float64(serialSize)/float64(len(data)), "B/serial")
+	b.ReportAllocs()
+	randomI := randomI(b.N)
+	b.StartTimer()
+
+	for i := 0; i < b.N; i++ {
+		n := randomI[i]
+		o := &VTProto{}
+		err := proto2json.Unmarshal(ser[n], o)
+		if err != nil {
+			b.Fatalf("goprotobuf failed to unmarshal: %s (%s)", err, ser[n])
+		}
+	}
+}
+
 func randomI(n int) []int {
 	randomI := make([]int, n)
 	for i := 0; i < len(randomI); i++ {
